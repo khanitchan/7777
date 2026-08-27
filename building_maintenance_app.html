@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแจ้งซ่อมระบบอาคาร</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-blue-600 p-6 text-center">
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
+                <i class="fas fa-tools text-2xl text-blue-600"></i>
+            </div>
+            <h1 class="text-2xl font-semibold text-white">ระบบแจ้งซ่อมอาคาร</h1>
+            <p class="text-blue-100 text-sm mt-1">กรุณากรอกข้อมูลเพื่อแจ้งปัญหา (ไม่ต้องเข้าสู่ระบบ)</p>
+        </div>
+
+        <!-- Form -->
+        <form id="maintenanceForm" class="p-6 space-y-4">
+            
+            <!-- ผู้แจ้ง -->
+            <div>
+                <label for="reporterName" class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้แจ้ง <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-user text-gray-400"></i>
+                    </div>
+                    <input type="text" id="reporterName" name="reporterName" required
+                        class="pl-10 w-full rounded-lg border-gray-300 border focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-sm transition"
+                        placeholder="ชื่อ-นามสกุล">
+                </div>
+            </div>
+
+            <!-- เบอร์ติดต่อ -->
+            <div>
+                <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์ติดต่อ <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-phone text-gray-400"></i>
+                    </div>
+                    <input type="tel" id="contact" name="contact" required
+                        class="pl-10 w-full rounded-lg border-gray-300 border focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-sm transition"
+                        placeholder="08X-XXX-XXXX">
+                </div>
+            </div>
+
+            <!-- สถานที่/จุดเกิดเหตุ -->
+            <div>
+                <label for="location" class="block text-sm font-medium text-gray-700 mb-1">สถานที่ / ห้อง / ชั้น <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-map-marker-alt text-gray-400"></i>
+                    </div>
+                    <input type="text" id="location" name="location" required
+                        class="pl-10 w-full rounded-lg border-gray-300 border focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-sm transition"
+                        placeholder="เช่น ชั้น 3 ห้อง 301 หรือ หน้าห้องน้ำชาย">
+                </div>
+            </div>
+
+            <!-- หมวดหมู่ปัญหา -->
+            <div>
+                <label for="category" class="block text-sm font-medium text-gray-700 mb-1">หมวดหมู่งานซ่อม <span class="text-red-500">*</span></label>
+                <select id="category" name="category" required
+                    class="w-full rounded-lg border-gray-300 border focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-sm transition bg-white">
+                    <option value="" disabled selected>-- เลือกหมวดหมู่ --</option>
+                    <option value="ไฟฟ้า">ระบบไฟฟ้า / หลอดไฟ</option>
+                    <option value="ประปา">ระบบประปา / ท่อน้ำ</option>
+                    <option value="แอร์">ระบบปรับอากาศ (แอร์)</option>
+                    <option value="โครงสร้าง">โครงสร้าง / ผนัง / เพดาน</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                </select>
+            </div>
+
+            <!-- รายละเอียดปัญหา -->
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">รายละเอียดปัญหา <span class="text-red-500">*</span></label>
+                <textarea id="description" name="description" rows="3" required
+                    class="w-full rounded-lg border-gray-300 border focus:ring-blue-500 focus:border-blue-500 px-4 py-2 text-sm transition"
+                    placeholder="อธิบายอาการเสียที่พบ..."></textarea>
+            </div>
+
+            <!-- ข้อความแจ้งเตือน -->
+            <div id="statusMessage" class="hidden rounded-lg p-3 text-sm text-center font-medium"></div>
+
+            <!-- ปุ่ม Submit -->
+            <button type="submit" id="submitBtn"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2">
+                <span>ส่งข้อมูลแจ้งซ่อม</span>
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('maintenanceForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // ป้องกันหน้าเว็บ Refresh
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // เปลี่ยนสถานะปุ่ม
+            const originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังส่งข้อมูล...';
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+
+            // 1. ดึงข้อมูลจากฟอร์ม
+            const formData = {
+                timestamp: new Date().toISOString(),
+                reporterName: document.getElementById('reporterName').value,
+                contact: document.getElementById('contact').value,
+                location: document.getElementById('location').value,
+                category: document.getElementById('category').value,
+                description: document.getElementById('description').value
+            };
+
+            /** * 2. ส่งข้อมูลไปยัง Backend หรือ Power Automate Webhook
+             * ให้คุณนำ Webhook URL ของ Power Automate มาใส่แทน 'YOUR_WEBHOOK_URL_HERE'
+             */
+            const endpointUrl = 'YOUR_WEBHOOK_URL_HERE'; // <--- เปลี่ยนตรงนี้
+
+            try {
+                // จำลองการดีเลย์ 1.5 วินาที (หากใช้จริงให้ลบ setTimeout ออก)
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                /* โค้ดส่งข้อมูลจริง (เปิด Comment เมื่อใส่ URL แล้ว)
+                const response = await fetch(endpointUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+                */
+
+                // แจ้งเตือนสำเร็จ
+                statusMessage.textContent = '✅ ส่งข้อมูลแจ้งซ่อมเรียบร้อยแล้ว!';
+                statusMessage.className = 'block rounded-lg p-3 text-sm text-center font-medium bg-green-100 text-green-700';
+                
+                // ล้างค่าในฟอร์ม
+                document.getElementById('maintenanceForm').reset();
+
+            } catch (error) {
+                // แจ้งเตือนเมื่อเกิดข้อผิดพลาด
+                console.error('Error:', error);
+                statusMessage.textContent = '❌ เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง';
+                statusMessage.className = 'block rounded-lg p-3 text-sm text-center font-medium bg-red-100 text-red-700';
+            } finally {
+                // คืนค่าปุ่มกลับมาเหมือนเดิม
+                submitBtn.innerHTML = originalBtnHtml;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                
+                // ซ่อนข้อความแจ้งเตือนหลังจาก 5 วินาที
+                setTimeout(() => {
+                    statusMessage.classList.add('hidden');
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>
